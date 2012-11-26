@@ -11,9 +11,12 @@ library
   exposed-modules:
     Text.Digestive.Aeson
   build-depends:
-    base >= 4.6,
     aeson >= 0.6,
-    unordered-containers >= 0.2,
+    base >= 4.6,
+    digestive-functors >= 0.5,
     text >= 0.11,
-    digestive-functors >= 0.5
+    unordered-containers >= 0.2,
+    vector >= 0.9.1
   hs-source-dirs: src
+  ghc-options: -Wall -fwarn-tabs -funbox-strict-fields -O2
+               -fno-warn-orphans -fno-warn-unused-do-bind
