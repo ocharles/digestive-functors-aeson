@@ -1,30 +1,52 @@
 {-# LANGUAGE NoMonomorphismRestriction #-}
 {-# LANGUAGE OverloadedStrings #-}
+-- | Run digestive-functors forms against JSON.
 module Text.Digestive.Aeson
     ( digestJSON ) where
 
-import Control.Applicative
+import Control.Lens
 import Data.Aeson (Value(..))
-import qualified Data.HashMap.Strict as Map
-import qualified Data.Text as T
-import qualified Data.Vector as V
-import Data.Maybe (fromMaybe)
-import Data.Text (Text)
+import Data.Aeson.Lens
 import Text.Digestive
+import Text.Read (readMaybe)
 
-digestJSON :: Monad m => Text -> Form v m a -> Value -> m (View v, Maybe a)
-digestJSON t f json = postForm t f (jsonEnv json)
+import qualified Data.Text as T
+
+--------------------------------------------------------------------------------
+{-| Given a JSON document and a form, attempt to use the JSON document to
+evaluation the form. If the form fails validation, then 'Nothing' is
+returned.
+
+Example:
+
+>     import Data.Aeson (json)
+>     import Data.Attoparsec.Lazy (parse, maybeResult)
+>     import Text.Digestive.Aeson (digestJSON)
+>     ...
+>     Just parsedJson <- maybeResult . parse json <$> fetchJsonText
+>     digestJSON "" myForm parsedJson
+-}
+digestJSON :: Monad m
+           => Form v m a
+           -- ^ The form to evaluate.
+           -> Value
+           -- ^ The JSON document to use for validation. If you need to use
+           -- only part of this document, you need to transform this value
+           -- first. You may find the @aeson-lens@ package useful for this.
+           -> m (View v, Maybe a)
+digestJSON f json = postForm "" f (jsonEnv json)
   where jsonEnv :: Monad m => Value -> Env m
-        jsonEnv (Object o) [p] = return $ fromMaybe [] (jsonToText <$> Map.lookup p o)
-        jsonEnv (Object o) ps = return $ maybe [] concat (jsonEnv <$> Map.lookup p' o <*> pure ps')
-          where (p':ps') = filter (not . T.null) ps
+        jsonEnv v p = return . maybe [] jsonToText $
+          Just v ^. pathToLens (filter (not . T.null) p)
 
-        jsonEnv o [] = return $ jsonToText o
-        jsonEnv _ _ = return []
+        pathToLens = foldl (.) id . map pathElem
+        pathElem p = maybe (key p) nth (readMaybe $ T.unpack p)
 
         jsonToText (String s) = [TextInput s]
-        jsonToText (Bool b) = [TextInput . T.pack $ show b]
-        jsonToText Null = []
-        jsonToText (Number n) = [TextInput . T.pack $ show n]
+        jsonToText (Bool b)   = showPack b
+        jsonToText (Number n) = showPack n
+        jsonToText Null       = []
         jsonToText (Object _) = []
-        jsonToText (Array a) = concatMap jsonToText $ V.toList a
+        jsonToText (Array _)  = []
+
+        showPack = return . TextInput . T.pack . show
