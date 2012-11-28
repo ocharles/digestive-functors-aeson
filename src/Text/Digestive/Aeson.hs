@@ -7,8 +7,8 @@ module Text.Digestive.Aeson
 import Control.Lens
 import Data.Aeson (Value(..))
 import Data.Aeson.Lens
+import Safe
 import Text.Digestive
-import Text.Read (readMaybe)
 
 import qualified Data.Text as T
 
@@ -40,7 +40,7 @@ digestJSON f json = postForm "" f (jsonEnv json)
           Just v ^. pathToLens (filter (not . T.null) p)
 
         pathToLens = foldl (.) id . map pathElem
-        pathElem p = maybe (key p) nth (readMaybe $ T.unpack p)
+        pathElem p = maybe (key p) nth (readMay $ T.unpack p)
 
         jsonToText (String s) = [TextInput s]
         jsonToText (Bool b)   = showPack b

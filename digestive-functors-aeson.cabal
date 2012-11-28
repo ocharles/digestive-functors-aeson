@@ -1,6 +1,6 @@
 name: digestive-functors-aeson
 category: Web, JSON
-version: 1.0.0
+version: 1.0.1
 license: GPL-3
 license-file: LICENSE
 author: Oliver Charles
@@ -29,6 +29,7 @@ library
     base >= 4.5 && < 4.7,
     digestive-functors >= 0.5,
     lens >= 3.0,
+    safe >= 0.3.3,
     text >= 0.11
   hs-source-dirs: src
   ghc-options: -Wall -fwarn-tabs -funbox-strict-fields -O2
