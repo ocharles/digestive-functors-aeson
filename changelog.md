@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.3
+
+- Added support for `listOf` to consume JSON arrays.
+
 ## 1.0.2
 
 - Added `jsonErrors`, which can transform a `ToJSON a => View a` into a aeson

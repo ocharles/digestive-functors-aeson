@@ -6,11 +6,11 @@ module Text.Digestive.Aeson
     , jsonErrors
     ) where
 
-import           Control.Lens
+import           Control.Lens hiding (Index, Path)
 import           Data.Aeson (ToJSON(toJSON), Value(..), object)
 import           Data.Aeson.Lens
 import           Data.Maybe (fromMaybe)
-import           Safe
+import qualified Data.Vector as V
 import           Text.Digestive
 
 import qualified Data.Text as T
@@ -39,8 +39,15 @@ digestJSON :: Monad m
            -> m (View v, Maybe a)
 digestJSON f json = postForm "" f (jsonEnv json)
   where jsonEnv :: Monad m => Value -> Env m
-        jsonEnv v p = return . maybe [] jsonToText $
-          Just v ^. pathToLens (filter (not . T.null) p)
+        jsonEnv v (MetaPath p) =
+            return . maybe [] size $ Just v ^. pathToLens p
+          where
+            size (Array a) = [Container . V.length $ a]
+            size _         = []
+
+        jsonEnv v (ActualPath p) =
+           return . maybe [] jsonToText $
+            Just v ^. pathToLens p
 
         jsonToText (String s) = [TextInput s]
         jsonToText (Bool b)   = showPack b
@@ -66,15 +73,21 @@ jsonErrors = fromMaybe (error "Constructing error tree failed!") .
     foldl encodeError (Just $ object []) . viewErrors
   where
     encodeError json (path, message) =
-      json & pathToLens path .~ Just (toJSON message)
+      json & pathToLens (pathComponents path) .~ Just (toJSON message)
 
 
 --------------------------------------------------------------------------------
+-- -    encodeError json (path, message) = json & pathToLens path .~ Just (toJSON message)
+-- -    pathToLens = foldl (.) id . map pathElem
+-- -    pathElem p = maybe (key p) nth (readMay $ T.unpack p)
+-- +              writeLBS (encode $ jsonErrors view)
 pathToLens :: Functor f
-           => [T.Text]
+           => [PathElement]
            -> (Maybe Value -> f (Maybe Value))
            -> Maybe Value
            -> f (Maybe Value)
 pathToLens = foldl (.) id . map pathElem
   where
-    pathElem p = maybe (key p) nth (readMay $ T.unpack p)
+    pathElem (Path "") = id
+    pathElem (Path p) = key p
+    pathElem (Index i) = nth i
