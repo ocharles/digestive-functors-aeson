@@ -2,13 +2,16 @@
 {-# LANGUAGE OverloadedStrings #-}
 -- | Run digestive-functors forms against JSON.
 module Text.Digestive.Aeson
-    ( digestJSON ) where
+    ( digestJSON
+    , jsonErrors
+    ) where
 
-import Control.Lens
-import Data.Aeson (Value(..))
-import Data.Aeson.Lens
-import Safe
-import Text.Digestive
+import           Control.Lens
+import           Data.Aeson (ToJSON(toJSON), Value(..), object)
+import           Data.Aeson.Lens
+import           Data.Maybe (fromMaybe)
+import           Safe
+import           Text.Digestive
 
 import qualified Data.Text as T
 
@@ -39,9 +42,6 @@ digestJSON f json = postForm "" f (jsonEnv json)
         jsonEnv v p = return . maybe [] jsonToText $
           Just v ^. pathToLens (filter (not . T.null) p)
 
-        pathToLens = foldl (.) id . map pathElem
-        pathElem p = maybe (key p) nth (readMay $ T.unpack p)
-
         jsonToText (String s) = [TextInput s]
         jsonToText (Bool b)   = showPack b
         jsonToText (Number n) = showPack n
@@ -50,3 +50,31 @@ digestJSON f json = postForm "" f (jsonEnv json)
         jsonToText (Array _)  = []
 
         showPack = return . TextInput . T.pack . show
+
+
+--------------------------------------------------------------------------------
+{-| Takes a 'View' and displays any errors in a hierachical format that matches
+the expected input.
+
+Example:
+
+>     > jsonErrors myForm
+>     {"person":{"name":"This field is required"}}
+-}
+jsonErrors :: ToJSON a => View a -> Value
+jsonErrors = fromMaybe (error "Constructing error tree failed!") .
+    foldl encodeError (Just $ object []) . viewErrors
+  where
+    encodeError json (path, message) =
+      json & pathToLens path .~ Just (toJSON message)
+
+
+--------------------------------------------------------------------------------
+pathToLens :: Functor f
+           => [T.Text]
+           -> (Maybe Value -> f (Maybe Value))
+           -> Maybe Value
+           -> f (Maybe Value)
+pathToLens = foldl (.) id . map pathElem
+  where
+    pathElem p = maybe (key p) nth (readMay $ T.unpack p)
