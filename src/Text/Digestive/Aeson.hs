@@ -45,7 +45,7 @@ digestJSON f json = postForm "" f (jsonEnv json)
           | head (reverse p) == "indices" = case Just v ^. pathToLens (init p) of
               Just (Array a) -> return $ return . TextInput $
                 unparseIndices [0 .. (pred $ V.length a)]
-              _ -> return []
+              _ -> return [ TextInput "" ]
           | otherwise =return . maybe [] jsonToText $
               Just v ^. pathToLens (filter (not . T.null) p)
 
