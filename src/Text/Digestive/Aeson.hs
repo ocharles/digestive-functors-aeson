@@ -12,8 +12,10 @@ import           Data.Aeson.Lens
 import           Data.Maybe (fromMaybe)
 import           Safe
 import           Text.Digestive
+import           Text.Digestive.Form.List (unparseIndices)
 
 import qualified Data.Text as T
+import qualified Data.Vector as V
 
 --------------------------------------------------------------------------------
 {-| Given a JSON document and a form, attempt to use the JSON document to
@@ -39,8 +41,13 @@ digestJSON :: Monad m
            -> m (View v, Maybe a)
 digestJSON f json = postForm "" f (jsonEnv json)
   where jsonEnv :: Monad m => Value -> Env m
-        jsonEnv v p = return . maybe [] jsonToText $
-          Just v ^. pathToLens (filter (not . T.null) p)
+        jsonEnv v p
+          | head (reverse p) == "indices" = case Just v ^. pathToLens (init p) of
+              Just (Array a) -> return $ return . TextInput $
+                unparseIndices [0 .. (pred $ V.length a)]
+              _ -> return []
+          | otherwise =return . maybe [] jsonToText $
+              Just v ^. pathToLens (filter (not . T.null) p)
 
         jsonToText (String s) = [TextInput s]
         jsonToText (Bool b)   = showPack b
@@ -75,6 +82,6 @@ pathToLens :: Functor f
            -> (Maybe Value -> f (Maybe Value))
            -> Maybe Value
            -> f (Maybe Value)
-pathToLens = foldl (.) id . map pathElem
+pathToLens = foldl (.) id . map pathElem . filter (not . T.null)
   where
     pathElem p = maybe (key p) nth (readMay $ T.unpack p)
