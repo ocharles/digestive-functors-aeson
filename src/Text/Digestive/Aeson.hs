@@ -46,8 +46,7 @@ digestJSON f json = postForm "" f (jsonEnv json)
               Just (Array a) -> return $ return . TextInput $
                 unparseIndices [0 .. (pred $ V.length a)]
               _ -> return [ TextInput "" ]
-          | otherwise =return . maybe [] jsonToText $
-              Just v ^. pathToLens (filter (not . T.null) p)
+          | otherwise = return . maybe [] jsonToText $ Just v ^. pathToLens p
 
         jsonToText (String s) = [TextInput s]
         jsonToText (Bool b)   = showPack b
@@ -82,6 +81,8 @@ pathToLens :: Functor f
            -> (Maybe Value -> f (Maybe Value))
            -> Maybe Value
            -> f (Maybe Value)
-pathToLens = foldl (.) id . map pathElem . filter (not . T.null)
+pathToLens [p] = key p
+pathToLens ps = let ps' = filter (not . T.null) ps
+                in key (head ps') . (foldl (.) id . map pathElem $ tail ps')
   where
     pathElem p = maybe (key p) nth (readMay $ T.unpack p)
