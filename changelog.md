@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.1
+
+- Support lists
+
+-----
+
 ## 1.0.2
 
 - Added `jsonErrors`, which can transform a `ToJSON a => View a` into a aeson
