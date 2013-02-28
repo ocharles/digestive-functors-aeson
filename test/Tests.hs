@@ -101,8 +101,17 @@ testPokedex = testGroup "Pokedex tests"
 
 
 --------------------------------------------------------------------------------
+testTopLevelLists :: Test
+testTopLevelLists = testCase "Top level lists" $ do
+  let (Just json) = decode "[\"hello\", \"world\"]"
+  (runIdentity $ snd <$> digestJSON (listOf text Nothing) json)
+    @?= Just [ "hello", "world" ]
+
+
+--------------------------------------------------------------------------------
 main :: IO ()
 main = defaultMain [ testPokemon
                    , testPokedex
+                   , testTopLevelLists
                    ]
 

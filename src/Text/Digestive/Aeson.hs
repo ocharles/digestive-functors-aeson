@@ -81,8 +81,6 @@ pathToLens :: Functor f
            -> (Maybe Value -> f (Maybe Value))
            -> Maybe Value
            -> f (Maybe Value)
-pathToLens [p] = key p
-pathToLens ps = let ps' = filter (not . T.null) ps
-                in key (head ps') . (foldl (.) id . map pathElem $ tail ps')
+pathToLens = foldl (.) id . map pathElem . filter (not . T.null)
   where
     pathElem p = maybe (key p) nth (readMay $ T.unpack p)

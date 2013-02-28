@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.1.2
+
+- Support top level lists. This means you can now parse the JSON document
+  `[ 0, 1, 2 ]` with the form `listOf stringRead`.
+
 ## 1.1
 
 - Support lists
