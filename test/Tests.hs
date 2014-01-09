@@ -1,16 +1,16 @@
 {-# LANGUAGE OverloadedStrings #-}
 module Main where
 
-import           Control.Applicative
-import           Control.Monad.Identity (runIdentity)
-import           Data.Aeson (decode)
-import           Data.ByteString.Lazy.Char8 ()
-import           Data.Text
-import           Test.Framework (Test, defaultMain, testGroup)
-import           Test.Framework.Providers.HUnit (testCase)
-import           Test.HUnit ((@?=))
-import           Text.Digestive (Form, (.:), check, text, listOf)
-import           Text.Digestive.Aeson (digestJSON, jsonErrors)
+import Control.Applicative
+import Control.Monad.Identity (runIdentity)
+import Data.Aeson (decode)
+import Data.ByteString.Lazy.Char8 ()
+import Data.Text (Text)
+import Test.HUnit ((@?=))
+import Text.Digestive (Form, (.:), check, text, listOf)
+import Text.Digestive.Aeson (digestJSON, jsonErrors)
+import Test.Tasty (TestTree, defaultMain, testGroup)
+import Test.Tasty.HUnit (testCase)
 
 import qualified Data.Text as T
 
@@ -31,7 +31,7 @@ data Pokedex = Pokedex [Pokemon]
 
 
 --------------------------------------------------------------------------------
-testPokemon :: Test
+testPokemon :: TestTree
 testPokemon = testGroup "Pokemon tests" [ testPokemonOk, testPokemonInvalid ]
   where
     testPokemonOk = testCase "Submit pokeForm with valid data" $
@@ -53,7 +53,7 @@ testPokemon = testGroup "Pokemon tests" [ testPokemonOk, testPokemonInvalid ]
 
 
 --------------------------------------------------------------------------------
-testPokedex :: Test
+testPokedex :: TestTree
 testPokedex = testGroup "Pokedex tests"
                 [ testPokedexSingle
                 , testPokedexMany
@@ -101,7 +101,7 @@ testPokedex = testGroup "Pokedex tests"
 
 
 --------------------------------------------------------------------------------
-testTopLevelLists :: Test
+testTopLevelLists :: TestTree
 testTopLevelLists = testCase "Top level lists" $ do
   let (Just json) = decode "[\"hello\", \"world\"]"
   (runIdentity $ snd <$> digestJSON (listOf text Nothing) json)
@@ -110,8 +110,8 @@ testTopLevelLists = testCase "Top level lists" $ do
 
 --------------------------------------------------------------------------------
 main :: IO ()
-main = defaultMain [ testPokemon
-                   , testPokedex
-                   , testTopLevelLists
-                   ]
+main = defaultMain $ testGroup "Tests" [ testPokemon
+                                       , testPokedex
+                                       , testTopLevelLists
+                                       ]
 

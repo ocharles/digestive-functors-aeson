@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.1.3
+
+- This version only includes distribution changes
+- The cabal file now correctly specifies the correct version of
+  the digestive-functors-aeson build dependency.
+- Tests are now ran using tasty rather than test-framework.
+
 ## 1.1.2
 
 - Support top level lists. This means you can now parse the JSON document

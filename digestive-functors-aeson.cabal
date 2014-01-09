@@ -43,13 +43,14 @@ test-suite tests
   hs-source-dirs: test
   main-is: Tests.hs
   build-depends:
+    digestive-functors-aeson,
+
     aeson,
     base >= 4.5 && < 4.7,
     bytestring >= 0.9,
     digestive-functors >= 0.6,
-    digestive-functors-aeson ==1.1,
     HUnit >= 1.2,
     mtl,
-    test-framework >= 0.6,
-    test-framework-hunit,
+    tasty >= 0.1,
+    tasty-hunit >= 0.1,
     text >= 0.11
