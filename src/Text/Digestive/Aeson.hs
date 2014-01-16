@@ -1,19 +1,23 @@
 {-# LANGUAGE NoMonomorphismRestriction #-}
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE RankNTypes #-}
 -- | Run digestive-functors forms against JSON.
 module Text.Digestive.Aeson
     ( digestJSON
     , jsonErrors
     ) where
 
-import           Control.Lens
-import           Data.Aeson (ToJSON(toJSON), Value(..), object)
-import           Data.Aeson.Lens
-import           Data.Maybe (fromMaybe)
-import           Safe
-import           Text.Digestive
-import           Text.Digestive.Form.List (unparseIndices)
+import Control.Lens
+import Control.Lens.Aeson
+import Control.Monad (join)
+import Data.Aeson (ToJSON(toJSON), Value(..), object)
+import Data.Maybe (fromMaybe)
+import Data.Monoid (mempty)
+import Safe (readMay)
+import Text.Digestive
+import Text.Digestive.Form.List (unparseIndices)
 
+import qualified Data.IntMap.Strict as IntMap
 import qualified Data.Text as T
 import qualified Data.Vector as V
 
@@ -42,11 +46,11 @@ digestJSON :: Monad m
 digestJSON f json = postForm "" f (const (return (jsonEnv json)))
   where jsonEnv :: Monad m => Value -> Env m
         jsonEnv v p
-          | head (reverse p) == "indices" = case Just v ^. pathToLens (init p) of
+          | last p == "indices" = case join (Just v ^? pathToLens (init p)) of
               Just (Array a) -> return $ return . TextInput $
                 unparseIndices [0 .. (pred $ V.length a)]
               _ -> return [ TextInput "" ]
-          | otherwise = return . maybe [] jsonToText $ Just v ^. pathToLens p
+          | otherwise = return . maybe [] jsonToText $ join (Just v ^? pathToLens p)
 
         jsonToText (String s) = [TextInput s]
         jsonToText (Bool b)   = showPack b
@@ -68,19 +72,22 @@ Example:
 >     {"person":{"name":"This field is required"}}
 -}
 jsonErrors :: ToJSON a => View a -> Value
-jsonErrors = fromMaybe (error "Constructing error tree failed!") .
-    foldl encodeError (Just $ object []) . viewErrors
+jsonErrors v =
+  fromMaybe (error "Unable to construct error response")
+            (foldl encodeError Nothing (viewErrors v))
   where
     encodeError json (path, message) =
-      json & pathToLens path .~ Just (toJSON message)
+      json & pathToLens path . non Null .~ toJSON message
 
 
 --------------------------------------------------------------------------------
-pathToLens :: Functor f
-           => [T.Text]
-           -> (Maybe Value -> f (Maybe Value))
-           -> Maybe Value
-           -> f (Maybe Value)
+pathToLens :: [T.Text] -> Traversal' (Maybe Value) (Maybe Value)
 pathToLens = foldl (.) id . map pathElem . filter (not . T.null)
   where
-    pathElem p = maybe (key p) nth (readMay $ T.unpack p)
+    pathElem p = maybe (non (object []) . _Object . at p)
+                       (\n -> non (Array mempty) . _Array . iso toMap fromMap . at n)
+                       (readMay $ T.unpack p)
+    toMap = V.ifoldl' (\m i a -> IntMap.insert i a m) IntMap.empty
+    fromMap m = V.fromList [ IntMap.findWithDefault Null x m
+                           | x <- [0 .. fst (IntMap.findMax m)]
+                           ]
