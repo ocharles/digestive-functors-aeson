@@ -1,6 +1,6 @@
 name: digestive-functors-aeson
 category: Web, JSON
-version: 1.1.3
+version: 1.1.4
 license: GPL-3
 license-file: LICENSE
 author: Oliver Charles
@@ -20,7 +20,7 @@ description:
 source-repository head
   type: git
   location: git://github.com/ocharles/digestive-functors-aeson.git
-  tag: v1.0.0
+  tag: v1.1.4
 
 library
   exposed-modules:

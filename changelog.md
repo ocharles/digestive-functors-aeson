@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1.4
+
+- Upgraded to `digestive-functors` 0.7.
+
 ## 1.1.3
 
 - This version only includes distribution changes
