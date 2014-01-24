@@ -39,7 +39,7 @@ digestJSON :: Monad m
            -- only part of this document, you need to transform this value
            -- first. You may find the @aeson-lens@ package useful for this.
            -> m (View v, Maybe a)
-digestJSON f json = postForm "" f (jsonEnv json)
+digestJSON f json = postForm "" f (const (return (jsonEnv json)))
   where jsonEnv :: Monad m => Value -> Env m
         jsonEnv v p
           | head (reverse p) == "indices" = case Just v ^. pathToLens (init p) of
