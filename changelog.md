@@ -1,5 +1,9 @@
 # Changelog
 
+## HEAD
+
+- Upgraded to `lens` 4.0. Dropped `lens-aeson` dependency.
+
 ## 1.1.4
 
 - Upgraded to `digestive-functors` 0.7.

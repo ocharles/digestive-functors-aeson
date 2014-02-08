@@ -8,9 +8,9 @@ module Text.Digestive.Aeson
     ) where
 
 import Control.Lens
-import Control.Lens.Aeson
 import Control.Monad (join)
 import Data.Aeson (ToJSON(toJSON), Value(..), object)
+import Data.Aeson.Lens
 import Data.Maybe (fromMaybe)
 import Data.Monoid (mempty)
 import Safe (readMay)
