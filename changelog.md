@@ -1,6 +1,6 @@
 # Changelog
 
-## HEAD
+## 1.1.5
 
 - Upgraded to `lens` 4.0. Dropped `lens-aeson` dependency.
 
