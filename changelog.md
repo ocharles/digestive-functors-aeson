@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1.6
+
+- Build with `lens` 4.1.
+
 ## 1.1.5
 
 - Upgraded to `lens` 4.0. Dropped `lens-aeson` dependency.
