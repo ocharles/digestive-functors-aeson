@@ -51,6 +51,7 @@ test-suite tests
     digestive-functors >= 0.6,
     HUnit >= 1.2,
     mtl,
+    scientific >= 0.2.0.1,
     tasty >= 0.1,
     tasty-hunit >= 0.1,
     text >= 0.11
