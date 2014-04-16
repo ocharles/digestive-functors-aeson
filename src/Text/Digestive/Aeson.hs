@@ -52,12 +52,13 @@ digestJSON f json = postForm "" f (const (return (jsonEnv json)))
               _ -> return [ TextInput "" ]
           | otherwise = return . maybe [] jsonToText $ join (Just v ^? pathToLens p)
 
-        jsonToText (String s) = [TextInput s]
-        jsonToText (Bool b)   = showPack b
-        jsonToText (Number n) = showPack n
-        jsonToText Null       = []
-        jsonToText (Object _) = []
-        jsonToText (Array _)  = []
+        jsonToText (String s)   = [TextInput s]
+        jsonToText (Bool True)  = [TextInput "on"]
+        jsonToText (Bool False) = [TextInput "off"]
+        jsonToText (Number n)   = showPack n
+        jsonToText Null         = []
+        jsonToText (Object _)   = []
+        jsonToText (Array _)    = []
 
         showPack = return . TextInput . T.pack . show
 

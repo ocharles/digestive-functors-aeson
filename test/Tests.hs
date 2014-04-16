@@ -2,7 +2,7 @@
 module Main where
 
 import Control.Applicative
-import Control.Monad.Identity (runIdentity)
+import Control.Monad.Identity (Identity, runIdentity)
 import Data.Aeson (decode)
 import Data.ByteString.Lazy.Char8 ()
 import Data.Ratio (denominator, numerator)
@@ -11,7 +11,7 @@ import Data.Text (Text)
 import Test.HUnit ((@?=))
 import Test.Tasty (TestTree, defaultMain, testGroup)
 import Test.Tasty.HUnit (testCase)
-import Text.Digestive (Form, (.:), Result(..), check, text, listOf, stringRead, validate)
+import Text.Digestive (Form, (.:), Result(..), bool, check, text, listOf, stringRead, validate)
 import Text.Digestive.Aeson (digestJSON, jsonErrors)
 
 import qualified Data.Text as T
@@ -116,10 +116,21 @@ testTopLevelLists = testCase "Top level lists" $ do
 
 
 --------------------------------------------------------------------------------
+testBool :: TestTree
+testBool = testCase "Booleans work" $ do
+  let (Just json) = decode "{\"a\": true, \"b\": false}"
+      parser :: Form () Identity (Bool, Bool)
+      parser = (,) <$> "a" .: bool Nothing <*> "b" .: bool (Just True)
+  (runIdentity $ snd <$> digestJSON parser json)
+    @?= Just (True, False)
+
+
+--------------------------------------------------------------------------------
 main :: IO ()
 main = defaultMain $ testGroup "Tests" [ testPokemon
                                        , testPokedex
                                        , testTopLevelLists
+                                       , testBool
                                        ]
 
 --------------------------------------------------------------------------------

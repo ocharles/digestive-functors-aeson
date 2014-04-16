@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.1.7
+
+- Correctly parse 'true' and 'false'. Now parses 'true' to be the string "on",
+  which means that the 'bool' form provided by `digestive-functors` works as
+  expected.
+
 ## 1.1.6
 
 - Build with `lens` 4.1.
