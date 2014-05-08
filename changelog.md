@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1.8
+
+- Builds with base 4.7
+
 ## 1.1.7
 
 - Correctly parse 'true' and 'false'. Now parses 'true' to be the string "on",
