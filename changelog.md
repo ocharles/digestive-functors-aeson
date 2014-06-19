@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1.9
+
+- Builds with lens < 4.3.
+
 ## 1.1.8
 
 - Builds with base 4.7
