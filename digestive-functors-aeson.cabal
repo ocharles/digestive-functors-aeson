@@ -1,6 +1,6 @@
 name: digestive-functors-aeson
 category: Web, JSON
-version: 1.1.10
+version: 1.1.11
 license: GPL-3
 license-file: LICENSE
 author: Oliver Charles
@@ -26,11 +26,12 @@ library
   exposed-modules:
     Text.Digestive.Aeson
   build-depends:
-    aeson >= 0.7 && < 0.8,
+    aeson >= 0.7 && < 0.9,
     base >= 4.5 && < 4.8,
     containers >= 0.5,
     digestive-functors >= 0.7 && < 0.8,
-    lens >= 4.0 && < 4.4,
+    lens >= 4.4 && < 4.5,
+    lens-aeson >= 1 && < 1.1,
     safe >= 0.3.3,
     text >= 0.11,
     vector >= 0.10

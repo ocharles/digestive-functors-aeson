@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.1.11
+
+- Builds with 4.4 <= lens < 4.5, aeson < 0.9. This increases the lower-bound on
+  the lens dependency.
+
 ## 1.1.10
 
 - Builds with lens < 4.4.
