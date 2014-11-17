@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.1.12.1
+
+- 1.1.12 included old test code which fails tests. This release includes the correct
+  code.
+
 ## 1.1.12
 
 - Builds with lens <= 4.7.

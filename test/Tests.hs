@@ -103,7 +103,7 @@ testPokedex = testGroup "Pokedex tests"
              , testCase "jsonErrors shows correct errors" $ jsonErrors v @?= errors
              ]
       where
-        (Just json) = decode "{\"pokemon\":[{\"name\": \"Pikachu\", \"number\": 10}, {\"name\":\"\"}]}"
+        (Just json) = decode "{\"pokemon\":[{\"name\": \"Pikachu\", \"number\": 10}, {\"name\":\"\", \"number\": 10}]}"
         (Just errors) = decode "{\"pokemon\":[null, {\"name\":\"Name cannot be empty\"}]}"
 
 
