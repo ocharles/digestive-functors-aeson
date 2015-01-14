@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1.13
+
+- Builds with lens < 4.8.
+
 ## 1.1.12.1
 
 - 1.1.12 included old test code which fails tests. This release includes the correct
@@ -7,7 +11,7 @@
 
 ## 1.1.12
 
-- Builds with lens <= 4.7.
+- Builds with lens < 4.7.
 
 ## 1.1.11
 
