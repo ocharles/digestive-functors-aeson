@@ -111,7 +111,7 @@ testPokedex = testGroup "Pokedex tests"
 testTopLevelLists :: TestTree
 testTopLevelLists = testCase "Top level lists" $ do
   let (Just json) = decode "[\"hello\", \"world\"]"
-  (runIdentity $ snd <$> digestJSON (listOf text Nothing) json)
+  (runIdentity $ snd <$> digestJSON (listOf text Nothing :: Form Text Identity [Text]) json)
     @?= Just [ "hello", "world" ]
 
 

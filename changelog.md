@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1.14
+
+- Update upper bounds to base < 4.9, digestive-functors < 0.9, lens < 4.10
+
 ## 1.1.13
 
 - Builds with lens < 4.8.
