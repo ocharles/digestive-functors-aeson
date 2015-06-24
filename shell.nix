@@ -1,5 +1,5 @@
 with (import <nixpkgs> {}).pkgs;
-let pkg = haskellngPackages.callPackage
+let pkg = haskell-ng.packages.ghc7101.callPackage
             ({ mkDerivation, aeson, base, bytestring, containers
              , digestive-functors, HUnit, lens, lens-aeson, mtl, safe
              , scientific, stdenv, tasty, tasty-hunit, text, vector
