@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1.18
+
+- Update upper bounds of `aeson`.
+
 ## 1.1.17
 
 - Update upper bounds of `lens`.
