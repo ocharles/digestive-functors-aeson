@@ -33,7 +33,7 @@ Example:
 >     import Text.Digestive.Aeson (digestJSON)
 >     ...
 >     Just parsedJson <- maybeResult . parse json <$> fetchJsonText
->     digestJSON "" myForm parsedJson
+>     digestJSON myForm parsedJson
 -}
 digestJSON :: Monad m
            => Form v m a
