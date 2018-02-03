@@ -1,3 +1,7 @@
+# 1.1.23
+
+- Increase upper bound of `lens`.
+
 # 1.1.22
 
 - Increase upper bound of `aeson`.
