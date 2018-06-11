@@ -1,4 +1,4 @@
-# NEXT
+# 1.1.25
 
 - Increase the upper bound of `aeson`.
 
