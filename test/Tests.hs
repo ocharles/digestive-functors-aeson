@@ -37,10 +37,15 @@ data Pokedex = Pokedex [Pokemon]
 testPokemon :: TestTree
 testPokemon = testGroup "Pokemon tests" [ testPokemonOk, testPokemonInvalid ]
   where
-    testPokemonOk = testCase "Submit pokeForm with valid data" $
-        (runIdentity $ snd <$> digestJSON pokeForm json) @?= Just expected
+    testPokemonOk =
+        let (v, r) = runIdentity $ digestJSON pokeForm json
+        in testGroup "Submit pokeForm with valid data/check error view"
+             [ testCase "Passed validation" $ r @?= Just expected
+             , testCase "jsonErrors shows no errors" $ jsonErrors v @?= errors
+             ]
       where
         (Just json) = decode "{\"name\":\"Pikachu\", \"number\":\"25\"}"
+        (Just errors) = decode "{}"
         expected = Pokemon { pokemonName = "Pikachu", pokemonNumber = 25 }
 
     testPokemonInvalid =
