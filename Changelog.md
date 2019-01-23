@@ -1,6 +1,10 @@
 
 # Changelog
 
+## next version
+
+- Make `jsonErrors` total.
+
 ## 1.1.26 -- 2018-07-06
 
 - Increase the upper bound of `lens`.
