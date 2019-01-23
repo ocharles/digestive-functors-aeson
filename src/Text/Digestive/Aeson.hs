@@ -74,7 +74,7 @@ Example:
 -}
 jsonErrors :: ToJSON a => View a -> Value
 jsonErrors v =
-  fromMaybe (error "Unable to construct error response")
+  fromMaybe (object [])
             (foldl encodeError Nothing (viewErrors v))
   where
     encodeError json (path, message) =
