@@ -1,9 +1,10 @@
-
 # Changelog
 
-## next version
+## 1.1.27 -- 2019-02-16
 
-- Make `jsonErrors` total.
+- Make `jsonErrors` total. Thanks to @gelisam for this fix! See
+  https://github.com/ocharles/digestive-functors-aeson/pull/12 for more
+  information.
 
 ## 1.1.26 -- 2018-07-06
 
