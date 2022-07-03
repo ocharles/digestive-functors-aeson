@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.1.28 -- 2022-07-03
+
+- Increase upper bound of `aeson`.
+- Increase upper bound of `lens`.
+- Increase upper bound of `lens-aeson`.
+
 ## 1.1.27 -- 2019-02-16
 
 - Make `jsonErrors` total. Thanks to @gelisam for this fix! See
